@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
 import { Button, Input, UnisonWordmark } from '@unison/ui';
@@ -89,9 +90,9 @@ export function LoginForm({
         aria-hidden
       />
       <div className="relative z-10 w-full max-w-md space-y-6">
-        <a href="/" className="block">
+        <Link href="/" className="block">
           <UnisonWordmark className="text-[var(--unison-mist)]" />
-        </a>
+        </Link>
         <div className="space-y-5 rounded-2xl border border-[var(--unison-border)] bg-[var(--unison-surface-elevated)] p-6 text-[var(--unison-text)] shadow-xl">
           <div className="space-y-1">
             <h1 className="font-display text-2xl font-bold tracking-tight">Sign in</h1>
