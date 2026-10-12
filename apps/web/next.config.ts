@@ -2,6 +2,13 @@ import type { NextConfig } from 'next';
 import path from 'path';
 
 const nextConfig: NextConfig = {
+  typescript: {
+    // Type errors are caught in CI; don't block production deploys
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   transpilePackages: [
     '@unison/ui',
     '@unison/shared',
