@@ -20,3 +20,5 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Supabase env now points to unison-production (rebuild required for NEXT_PUBLIC_* values).
