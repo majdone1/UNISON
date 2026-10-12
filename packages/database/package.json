@@ -1,0 +1,34 @@
+{
+  "name": "@unison/database",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./demo": "./src/demo-store.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'lint ok'",
+    "test": "vitest run",
+    "migrate": "node ../../scripts/ci-validate-db.mjs && echo 'Schema OK. Apply with: supabase db push  OR  psql \"$DATABASE_URL\" -f supabase/migrations/<file>.sql'",
+    "seed": "tsx src/seed-cli.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.49.1",
+    "@unison/auth": "workspace:*",
+    "@unison/billing": "workspace:*",
+    "@unison/config": "workspace:*",
+    "@unison/shared": "workspace:*",
+    "@unison/types": "workspace:*",
+    "@unison/validation": "workspace:*"
+  },
+  "devDependencies": {
+    "@unison/typescript-config": "workspace:*",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9"
+  }
+}

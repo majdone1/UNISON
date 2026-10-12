@@ -1,0 +1,76 @@
+:root {
+  --unison-ink: #071a1c;
+  --unison-ocean: #0e3d3f;
+  --unison-teal: #1f6f6a;
+  --unison-mist: #e8f3f1;
+  --unison-sand: #f3f0e7;
+  --unison-chartreuse: #c8f560;
+  --unison-coral: #e86f4a;
+  --unison-slate: #2a3436;
+  --unison-surface: #f7f5ef;
+  --unison-surface-elevated: #ffffff;
+  --unison-border: rgba(7, 26, 28, 0.12);
+  --unison-text: #071a1c;
+  --unison-muted: #5b6a6c;
+  --unison-ring: #1f6f6a;
+  --unison-hero-glow: radial-gradient(1200px 600px at 80% 10%, rgba(200, 245, 96, 0.35), transparent 55%),
+    radial-gradient(900px 500px at 10% 80%, rgba(31, 111, 106, 0.35), transparent 50%),
+    linear-gradient(160deg, #071a1c 0%, #0e3d3f 45%, #163a36 100%);
+}
+
+.dark {
+  --unison-surface: #0b1718;
+  --unison-surface-elevated: #122224;
+  --unison-border: rgba(232, 243, 241, 0.12);
+  --unison-text: #eef6f4;
+  --unison-muted: #9db0b1;
+  --unison-sand: #122224;
+  --unison-mist: #163033;
+}
+
+@keyframes unison-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes unison-pulse-soft {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes unison-draw {
+  from {
+    stroke-dashoffset: 120;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.unison-rise {
+  animation: unison-rise 0.7s ease-out both;
+}
+
+.unison-rise-delay-1 {
+  animation-delay: 0.12s;
+}
+
+.unison-rise-delay-2 {
+  animation-delay: 0.24s;
+}
+
+.unison-mark-draw path {
+  stroke-dasharray: 120;
+  animation: unison-draw 1.2s ease forwards;
+}

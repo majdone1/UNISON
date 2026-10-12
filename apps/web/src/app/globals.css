@@ -1,0 +1,47 @@
+@import "tailwindcss";
+@import "@unison/ui/styles.css";
+
+@source "../../../../packages/ui/src";
+
+:root {
+  --font-display: var(--font-syne), "Syne", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: var(--font-manrope), "Manrope", "Avenir Next", "Segoe UI", sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--unison-surface);
+  --color-foreground: var(--unison-text);
+  --font-sans: var(--font-body);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--unison-surface);
+  color: var(--unison-text);
+  font-family: var(--font-body), sans-serif;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--unison-chartreuse);
+  color: var(--unison-ink);
+}

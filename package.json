@@ -1,0 +1,45 @@
+{
+  "name": "unison",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.15.9",
+  "scripts": {
+    "install:all": "pnpm install",
+    "dev": "turbo run dev --filter=@unison/web",
+    "dev:web": "turbo run dev --filter=@unison/web",
+    "dev:mobile": "turbo run start --filter=@unison/mobile",
+    "dev:desktop": "turbo run tauri:dev --filter=@unison/desktop",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:e2e": "pnpm --filter @unison/web test:e2e",
+    "test:security": "pnpm --filter @unison/security test",
+    "db:migrate": "pnpm --filter @unison/database migrate",
+    "db:seed": "pnpm --filter @unison/database seed",
+    "ci:db": "node scripts/ci-validate-db.mjs",
+    "ci:desktop": "node scripts/ci-validate-desktop.mjs",
+    "ci:mobile": "node scripts/ci-validate-mobile.mjs",
+    "ci:secrets": "node scripts/ci-check-no-secrets.mjs",
+    "ci:audit": "node scripts/ci-audit.mjs",
+    "ci:local": "pnpm install --frozen-lockfile && pnpm typecheck && pnpm lint && pnpm test && pnpm test:security && pnpm --filter @unison/web build && pnpm ci:mobile && pnpm ci:desktop && pnpm ci:db && pnpm ci:secrets && pnpm ci:audit",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,css}\"",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.2"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "^19.0.10",
+      "@types/react-dom": "^19.0.4",
+      "tar": "^7.5.19",
+      "tinypool": "^2.1.2"
+    }
+  }
+}

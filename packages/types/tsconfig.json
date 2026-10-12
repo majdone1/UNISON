@@ -1,0 +1,7 @@
+{
+  "extends": "@unison/typescript-config/base.json",
+  "include": ["src/**/*.ts"],
+  "compilerOptions": {
+    "noEmit": true
+  }
+}

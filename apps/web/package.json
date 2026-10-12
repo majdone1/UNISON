@@ -1,0 +1,47 @@
+{
+  "name": "@unison/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1 --port 43127",
+    "dev:clean": "rm -rf .next && next dev --hostname 127.0.0.1 --port 43127",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1 --port 43127",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "clean": "rm -rf .next"
+  },
+  "dependencies": {
+    "@supabase/ssr": "0.6.1",
+    "@supabase/supabase-js": "2.49.1",
+    "@tanstack/react-virtual": "^3.14.13",
+    "@unison/auth": "workspace:*",
+    "@unison/billing": "workspace:*",
+    "@unison/config": "workspace:*",
+    "@unison/database": "workspace:*",
+    "@unison/security": "workspace:*",
+    "@unison/shared": "workspace:*",
+    "@unison/types": "workspace:*",
+    "@unison/ui": "workspace:*",
+    "@unison/validation": "workspace:*",
+    "next": "15.5.27",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.51.1",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.27",
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "vitest": "^3.0.9"
+  }
+}

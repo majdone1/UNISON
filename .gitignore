@@ -1,0 +1,53 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Builds
+dist
+build
+.next
+.turbo
+.expo
+out
+*.tsbuildinfo
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+apps/*/.env
+apps/*/.env.*
+!apps/*/.env.example
+
+# OS / IDE
+.DS_Store
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# Test / coverage
+coverage
+playwright-report
+test-results
+
+# Tauri / native
+apps/desktop/src-tauri/target
+*.app
+*.dmg
+*.AppImage
+*.msi
+*.exe
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Misc
+.vercel
+.supabase
+*.local
+
+# Agent scratch
+agent-tools/
+AGENTS.md

@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "UNISON",
+    "slug": "unison",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "unison",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.unison.app"
+    },
+    "android": {
+      "package": "com.unison.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0E3D3F"
+      }
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
