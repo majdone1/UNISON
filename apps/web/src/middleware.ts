@@ -11,7 +11,7 @@ const formViewLimiter = new MemoryRateLimiter(30, 60_000);
 const searchLimiter = new MemoryRateLimiter(60, 60_000);
 
 function isProtectedPath(pathname: string): boolean {
-  return pathname === '/app' || pathname.startsWith('/app/');
+  return pathname === '/app' || pathname.startsWith('/app/') || pathname === '/onboarding';
 }
 
 function redirectToLogin(request: NextRequest, reason?: string): NextResponse {

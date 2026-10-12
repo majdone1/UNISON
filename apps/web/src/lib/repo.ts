@@ -75,7 +75,7 @@ export async function requireSession(repo: UnisonRepository): Promise<DemoSessio
   } catch (error) {
     if (isAuthRequiredError(error)) redirect('/login');
     if (error instanceof Error && error.message.startsWith('ORG_MEMBERSHIP_REQUIRED')) {
-      redirect('/login?error=no_org');
+      redirect('/onboarding');
     }
     throw error;
   }
