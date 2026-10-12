@@ -12,6 +12,29 @@ const MESSAGES: Record<string, string> = {
     'You are signed in, but your account has not been added to an organization yet. Ask an organization owner to invite you.',
 };
 
+/**
+ * Maps Supabase Auth failures to an actionable message. `invalid_credentials` is identical for
+ * unknown email and wrong password, so this never reveals whether an account exists.
+ */
+function describeSignInError(e: { code?: string; status?: number; message?: string }): string {
+  switch (e.code) {
+    case 'invalid_credentials':
+      return 'Invalid email or password.';
+    case 'email_not_confirmed':
+      return 'This account is not confirmed yet. Confirm the user in Supabase (Authentication → Users).';
+    case 'over_request_rate_limit':
+    case 'over_email_send_rate_limit':
+      return 'Too many attempts. Wait a minute and try again.';
+  }
+  if (/api key/i.test(e.message ?? '')) {
+    return 'Sign-in is misconfigured (invalid Supabase API key). Check the NEXT_PUBLIC_SUPABASE_* variables.';
+  }
+  if (e.status === undefined || e.status === 0 || e.status >= 500) {
+    return 'Could not reach the sign-in service. Try again in a moment.';
+  }
+  return `Sign-in failed${e.code ? ` (${e.code})` : ''}. Please try again.`;
+}
+
 export function LoginForm({
   supabaseUrl,
   supabaseAnonKey,
@@ -43,7 +66,7 @@ export function LoginForm({
     const { error: authError } = await client().auth.signInWithPassword({ email, password });
     if (authError) {
       setBusy(false);
-      setError('Invalid email or password.');
+      setError(describeSignInError(authError));
       return;
     }
     // Full navigation so the middleware sees the freshly written session cookies.
