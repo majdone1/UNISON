@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { getEnv, hasSupabaseCredentials, isDemoMode } from '@unison/config';
+import { safeNextPath } from '@/lib/auth-redirect';
 
 /**
  * Supabase Auth redirect target (Site URL / Additional Redirect URLs).
@@ -10,8 +11,7 @@ import { getEnv, hasSupabaseCredentials, isDemoMode } from '@unison/config';
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get('code');
-  const nextPath = url.searchParams.get('next') ?? '/app';
-  const safeNext = nextPath.startsWith('/') ? nextPath : '/app';
+  const safeNext = safeNextPath(url.searchParams.get('next'));
   const env = getEnv();
 
   if (code && !isDemoMode(env) && hasSupabaseCredentials(env)) {
@@ -35,5 +35,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(new URL(`/app?auth_error=1`, url.origin));
+  return NextResponse.redirect(new URL('/login?error=callback', url.origin));
 }

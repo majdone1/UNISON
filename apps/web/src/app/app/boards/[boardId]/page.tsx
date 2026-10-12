@@ -1,4 +1,5 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { isAuthRequiredError } from '@unison/database';
 import { BoardViewClient } from '@/components/board-view';
 import { getServerRepo } from '@/lib/repo';
 
@@ -24,7 +25,8 @@ export default async function BoardPage({
         }}
       />
     );
-  } catch {
+  } catch (error) {
+    if (isAuthRequiredError(error)) redirect('/login');
     notFound();
   }
 }

@@ -66,6 +66,17 @@ CI/local keep `DEMO_MODE=true`.
 
 App callback route: `/auth/callback` (exchanges Auth `code` for a session cookie).
 
+## Auth gate (live mode)
+
+With `DEMO_MODE=false` and Supabase credentials set, `/app/**` requires a Supabase session:
+`apps/web/src/middleware.ts` verifies it (`auth.getUser()`) and redirects anonymous visitors to
+`/login?next=…`. API routes return `401 AUTH_REQUIRED`. `/login` supports email + password and an
+email sign-in link (existing users only; the link lands on `/auth/callback`). A signed-in user without
+an `org_memberships` row is sent to `/login?error=no_org` — invite them or insert the membership.
+
+If `DEMO_MODE=false` but the Supabase URL/anon key are missing, the app silently falls back to
+in-memory demo mode. Always confirm `GET /api/health` shows `demoMode: false`.
+
 ## Web (local / CI)
 
 ```bash

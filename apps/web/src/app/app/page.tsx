@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { Badge, buttonVariants } from '@unison/ui';
-import { getServerRepo } from '@/lib/repo';
+import { getServerRepo, requireSession } from '@/lib/repo';
 
 export default async function AppHomePage() {
   const repo = await getServerRepo();
-  const session = await repo.getSession();
+  const session = await requireSession(repo);
   const boards = await repo.listBoards(session.org.id);
   const stats = await repo.dashboardStats(session.org.id);
   const notifications = await repo.listNotifications(session.user.id);

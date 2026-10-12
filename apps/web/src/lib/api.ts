@@ -10,6 +10,12 @@ export function jsonError(message: string, status = 400) {
 
 export function mapRepoError(error: unknown) {
   const message = error instanceof Error ? error.message : 'UNKNOWN';
+  if (message.startsWith('AUTH_REQUIRED')) {
+    // Never echo upstream auth details; the client only needs to know it must sign in.
+    return jsonError('AUTH_REQUIRED', 401);
+  }
+  if (message.startsWith('ORG_MEMBERSHIP_REQUIRED'))
+    return jsonError('ORG_MEMBERSHIP_REQUIRED', 403);
   if (
     message === 'CROSS_TENANT_DENIED' ||
     message === 'FORBIDDEN' ||

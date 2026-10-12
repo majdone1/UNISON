@@ -35,6 +35,21 @@ import {
   throwOnError,
 } from './supabase-mappers';
 
+/** Thrown when there is no (valid) Supabase Auth session. Callers map it to 401 / redirect to /login. */
+export class AuthRequiredError extends Error {
+  readonly code = 'AUTH_REQUIRED';
+  constructor(detail = 'no Supabase user session') {
+    super(`AUTH_REQUIRED: ${detail}`);
+    this.name = 'AuthRequiredError';
+  }
+}
+
+/** True for AuthRequiredError and for any error whose message carries the AUTH_REQUIRED code. */
+export function isAuthRequiredError(error: unknown): boolean {
+  if (error instanceof AuthRequiredError) return true;
+  return error instanceof Error && error.message.startsWith('AUTH_REQUIRED');
+}
+
 function notSupported(method: string): never {
   throw new Error(
     `SUPABASE_${method}_NOT_SUPPORTED: use Auth session APIs in live mode (demo switchUser/impersonation disabled).`,
@@ -51,10 +66,11 @@ export class SupabaseRepository implements UnisonRepository {
   constructor(
     private readonly client: UnisonSupabaseClient,
     private readonly env: UnisonEnv = getEnv(),
+    private readonly accessToken?: string,
   ) {}
 
   static fromEnv(env: UnisonEnv = getEnv(), accessToken?: string): SupabaseRepository {
-    return new SupabaseRepository(createUserSupabaseClient(env, accessToken), env);
+    return new SupabaseRepository(createUserSupabaseClient(env, accessToken), env, accessToken);
   }
 
   private async requireSession(): Promise<DemoSession> {
@@ -69,10 +85,19 @@ export class SupabaseRepository implements UnisonRepository {
   }
 
   async getSession(): Promise<DemoSession> {
-    const { data: authData, error: authError } = await this.client.auth.getUser();
-    throwOnError(authError, 'AUTH_GET_USER');
+    // The client is stateless (persistSession: false), so auth.getUser() without a JWT can never
+    // find a session. Verify the cookie-derived access token explicitly; no token = not signed in.
+    if (!this.accessToken) throw new AuthRequiredError();
+    const { data: authData, error: authError } = await this.client.auth.getUser(this.accessToken);
+    if (authError) {
+      // Missing/expired/invalid session is an expected "not signed in" state, not a server fault.
+      if (authError.name === 'AuthSessionMissingError' || (authError.status ?? 500) < 500) {
+        throw new AuthRequiredError(authError.message);
+      }
+      throwOnError(authError, 'AUTH_GET_USER');
+    }
     const userId = authData.user?.id;
-    if (!userId) throw new Error('AUTH_REQUIRED: no Supabase user session');
+    if (!userId) throw new AuthRequiredError();
 
     const { data: profile, error: profileError } = await this.client
       .from('profiles')

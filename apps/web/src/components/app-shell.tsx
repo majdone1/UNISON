@@ -43,7 +43,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     void fetch('/api/session')
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.status === 401) {
+          // Session expired mid-visit — send the user back to sign in.
+          window.location.assign('/login');
+          return null;
+        }
+        return r.ok ? r.json() : null;
+      })
       .then(setData)
       .catch(() => setData(null));
   }, [pathname]);
