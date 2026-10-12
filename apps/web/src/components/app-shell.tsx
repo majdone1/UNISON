@@ -98,17 +98,22 @@ function NavItem({
     <Link
       href={href}
       className={cn(
-        'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150',
+        'group flex items-center gap-2.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all duration-150',
         active
-          ? 'bg-[var(--kordyva-accent)] text-white shadow-sm'
-          : 'text-[var(--kordyva-nav-text)] hover:bg-[var(--kordyva-nav-hover)] hover:text-[var(--kordyva-nav-text-active)]',
+          ? 'text-white'
+          : 'hover:bg-[#3D3F56]',
       )}
+      style={
+        active
+          ? { background: 'rgba(255,255,255,0.12)', color: '#FFFFFF' }
+          : { color: '#D0D4E4' }
+      }
     >
       <Icon
         d={icons[iconKey]}
         className={cn(
-          'transition-colors',
-          active ? 'text-white' : 'text-[var(--kordyva-nav-icon)] group-hover:text-[var(--kordyva-nav-text-active)]',
+          'h-4 w-4 shrink-0 transition-colors',
+          active ? 'text-white' : 'text-[#9295A4] group-hover:text-[#D0D4E4]',
         )}
       />
       <span className="truncate">{label}</span>
@@ -147,60 +152,73 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div
-      className="min-h-screen bg-[var(--kordyva-bg)] text-[var(--kordyva-text)]"
+      className="min-h-screen text-[#323338]"
       dir={dir}
       style={{
-        // ── KORDYVA design tokens ──────────────────────────────────────────
-        ['--kordyva-bg' as string]:                '#F6F7FB',
-        ['--kordyva-text' as string]:              '#1A1A2E',
-        ['--kordyva-sidebar-bg' as string]:        '#FFFFFF',
-        ['--kordyva-sidebar-border' as string]:    '#E5E7EB',
-        ['--kordyva-accent' as string]:            '#6C47FF',
-        ['--kordyva-accent-soft' as string]:       '#EDE9FF',
-        ['--kordyva-nav-text' as string]:          '#4B5563',
-        ['--kordyva-nav-text-active' as string]:   '#1A1A2E',
-        ['--kordyva-nav-icon' as string]:          '#9CA3AF',
-        ['--kordyva-nav-hover' as string]:         '#F3F4F6',
+        background: '#F5F6F8',
+        // ── KORDYVA / Monday-style design tokens ──────────────────────────
+        ['--kordyva-bg' as string]:                '#F5F6F8',
+        ['--kordyva-text' as string]:              '#323338',
+        ['--kordyva-sidebar-bg' as string]:        '#2B2D42',
+        ['--kordyva-sidebar-border' as string]:    '#3D3F56',
+        ['--kordyva-accent' as string]:            '#0073EA',
+        ['--kordyva-accent-soft' as string]:       '#E8F0FE',
+        ['--kordyva-nav-text' as string]:          '#D0D4E4',
+        ['--kordyva-nav-text-active' as string]:   '#FFFFFF',
+        ['--kordyva-nav-icon' as string]:          '#9295A4',
+        ['--kordyva-nav-hover' as string]:         '#3D3F56',
         ['--kordyva-surface' as string]:           '#FFFFFF',
-        ['--kordyva-surface-2' as string]:         '#F9FAFB',
-        ['--kordyva-border' as string]:            '#E5E7EB',
-        ['--kordyva-muted' as string]:             '#6B7280',
-        ['--kordyva-section-label' as string]:     '#9CA3AF',
+        ['--kordyva-surface-2' as string]:         '#F5F6F8',
+        ['--kordyva-border' as string]:            '#E6E9EF',
+        ['--kordyva-muted' as string]:             '#676879',
+        ['--kordyva-section-label' as string]:     '#9295A4',
       } as React.CSSProperties}
     >
       <div className="flex min-h-screen">
-        {/* ── Sidebar ─────────────────────────────────────────────────────── */}
+        {/* ── Monday-style dark sidebar ───────────────────────────────────── */}
         <aside
-          className="sticky top-0 flex h-screen w-[240px] shrink-0 flex-col overflow-y-auto border-e"
+          className="sticky top-0 flex h-screen w-[220px] shrink-0 flex-col overflow-y-auto"
           style={{
-            background: 'var(--kordyva-sidebar-bg)',
-            borderColor: 'var(--kordyva-sidebar-border)',
+            background: '#2B2D42',
+            borderRight: '1px solid #3D3F56',
           }}
         >
-          {/* Logo */}
-          <div className="flex h-14 items-center gap-2 border-b px-5" style={{ borderColor: 'var(--kordyva-sidebar-border)' }}>
+          {/* Logo + workspace header */}
+          <div
+            className="flex h-14 items-center gap-2.5 px-4"
+            style={{ borderBottom: '1px solid #3D3F56' }}
+          >
             <div
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white"
-              style={{ background: 'var(--kordyva-accent)' }}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-sm font-bold text-white"
+              style={{ background: '#6C47FF' }}
             >
               K
             </div>
-            <span className="text-base font-bold tracking-tight" style={{ color: 'var(--kordyva-text)' }}>
-              KORDYVA
-            </span>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-bold text-white">KORDYVA</p>
+              {data && (
+                <p className="truncate text-xs" style={{ color: '#9295A4' }}>
+                  {data.session.org.name}
+                </p>
+              )}
+            </div>
           </div>
 
-          {/* Org name */}
-          {data && (
-            <div className="border-b px-5 py-3" style={{ borderColor: 'var(--kordyva-sidebar-border)' }}>
-              <p className="truncate text-xs font-semibold" style={{ color: 'var(--kordyva-section-label)' }}>
-                {data.session.org.name}
-              </p>
+          {/* Search bar */}
+          <div className="px-3 py-2">
+            <div
+              className="flex h-8 items-center gap-2 rounded-md px-3"
+              style={{ background: '#3D3F56' }}
+            >
+              <svg className="h-3.5 w-3.5 shrink-0" style={{ color: '#9295A4' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <span className="text-xs" style={{ color: '#9295A4' }}>Search</span>
             </div>
-          )}
+          </div>
 
           {/* Primary nav */}
-          <nav className="flex flex-1 flex-col gap-0.5 px-3 py-3">
+          <nav className="flex flex-1 flex-col gap-0.5 px-2 py-1">
             {links.map((link) => (
               <NavItem
                 key={link.href}
@@ -215,7 +233,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="mt-3">
               <button
                 className="mb-1 flex w-full items-center justify-between px-3 py-1 text-xs font-semibold uppercase tracking-wider"
-                style={{ color: 'var(--kordyva-section-label)' }}
+                style={{ color: '#9295A4' }}
                 onClick={() => setSettingsOpen((v) => !v)}
               >
                 <span>Settings</span>
@@ -228,6 +246,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className={cn('h-3 w-3 transition-transform', settingsOpen ? 'rotate-90' : '')}
+                  style={{ color: '#9295A4' }}
                 >
                   <path d="M9 18l6-6-6-6" />
                 </svg>
@@ -246,14 +265,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* Language picker */}
-          <div className="border-t px-4 py-3" style={{ borderColor: 'var(--kordyva-sidebar-border)' }}>
+          <div className="px-3 py-2" style={{ borderTop: '1px solid #3D3F56' }}>
             <select
               id="locale"
-              className="h-8 w-full rounded-md border px-2 text-xs"
+              className="h-7 w-full rounded px-2 text-xs"
               style={{
-                background: 'var(--kordyva-surface-2)',
-                borderColor: 'var(--kordyva-border)',
-                color: 'var(--kordyva-muted)',
+                background: '#3D3F56',
+                border: 'none',
+                color: '#9295A4',
               }}
               value={locale}
               onChange={(e) => setLocale(e.target.value as Locale)}
@@ -267,21 +286,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {/* User profile */}
           {data && (
             <div
-              className="flex items-center gap-3 border-t px-4 py-3"
-              style={{ borderColor: 'var(--kordyva-sidebar-border)' }}
+              className="flex items-center gap-2.5 px-3 py-3"
+              style={{ borderTop: '1px solid #3D3F56' }}
             >
               <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                style={{ background: 'var(--kordyva-accent)' }}
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                style={{ background: '#6C47FF' }}
               >
                 {initials}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-semibold" style={{ color: 'var(--kordyva-text)' }}>
+                <p className="truncate text-xs font-semibold text-white">
                   {data.session.user.displayName}
                 </p>
-                <p className="truncate text-xs" style={{ color: 'var(--kordyva-muted)' }}>
-                  {data.entitlements.planId} plan
+                <p className="truncate text-xs" style={{ color: '#9295A4' }}>
+                  {data.entitlements.planId}
                 </p>
               </div>
               {data.impersonating && (
@@ -305,26 +324,34 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         {/* ── Main content ─────────────────────────────────────────────────── */}
         <div className="flex min-w-0 flex-1 flex-col">
-          {/* Top bar */}
+          {/* Top bar — Monday-style white header */}
           <header
             className="sticky top-0 z-10 flex h-14 items-center justify-between border-b px-6"
             style={{
-              background: 'var(--kordyva-surface)',
-              borderColor: 'var(--kordyva-border)',
+              background: '#FFFFFF',
+              borderColor: '#E6E9EF',
             }}
           >
-            <div className="flex items-center gap-2">
-              {/* Breadcrumb placeholder — pages can override via portal */}
-              <span className="text-sm font-medium" style={{ color: 'var(--kordyva-muted)' }}>
+            <div className="flex items-center gap-3">
+              {/* Page title placeholder */}
+              <span className="text-base font-semibold text-[#323338]">
                 {data?.session.org.name ?? 'KORDYVA'}
               </span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               {data?.impersonating && <Badge tone="warn">Impersonating</Badge>}
+              {/* Notification bell */}
+              <button className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[#F5F6F8] transition-colors">
+                <svg className="h-4.5 w-4.5" style={{ color: '#676879' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+              </button>
+              {/* User avatar */}
               {data && (
                 <div
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white"
-                  style={{ background: 'var(--kordyva-accent)' }}
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white cursor-pointer"
+                  style={{ background: '#6C47FF' }}
+                  title={data.session.user.email}
                 >
                   {initials}
                 </div>
@@ -333,7 +360,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </header>
 
           {/* Page content */}
-          <main className="flex-1 overflow-y-auto px-6 py-6 md:px-8">
+          <main className="flex-1 overflow-y-auto">
             {children}
           </main>
         </div>

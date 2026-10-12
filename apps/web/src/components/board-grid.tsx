@@ -18,6 +18,19 @@ type Member = {
   user: { id: string; displayName: string; email: string };
 };
 
+// Returns true if a hex color is "light" (so text should be dark)
+function isLightColor(hex: string): boolean {
+  try {
+    const c = hex.replace('#', '');
+    const r = parseInt(c.slice(0, 2), 16);
+    const g = parseInt(c.slice(2, 4), 16);
+    const b = parseInt(c.slice(4, 6), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 128;
+  } catch {
+    return true;
+  }
+}
+
 const ADDABLE_TYPES: ColumnType[] = [
   'text',
   'long_text',
@@ -627,20 +640,34 @@ export function BoardGrid({
               color: o.color ?? '#94A3B8',
             }))
           : getStatusLabels(column);
+      const currentLabel = labels.find((l) => l.id === String(value ?? ''));
+      const pillColor = currentLabel?.color ?? '#E5E7EB';
+      // Monday.com-style: colored pill that opens a dropdown picker
       return (
-        <select
-          className="h-8 w-full rounded-md border border-[var(--unison-border)] bg-transparent px-1 text-sm"
-          value={String(value ?? '')}
-          disabled={busy || readOnly}
-          onChange={(e) => void setCell(item.id, column.id, e.target.value)}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {labels.map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.name}
-            </option>
-          ))}
-        </select>
+        <div className="relative flex h-full w-full items-center" onClick={(e) => e.stopPropagation()}>
+          <select
+            className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+            value={String(value ?? '')}
+            disabled={busy || readOnly}
+            onChange={(e) => void setCell(item.id, column.id, e.target.value)}
+          >
+            <option value="">—</option>
+            {labels.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.name}
+              </option>
+            ))}
+          </select>
+          <div
+            className="flex h-full w-full cursor-pointer items-center justify-center px-1 text-xs font-semibold uppercase tracking-wide transition-opacity hover:opacity-90"
+            style={{
+              background: pillColor,
+              color: isLightColor(pillColor) ? '#1A1A2E' : '#FFFFFF',
+            }}
+          >
+            <span className="truncate">{currentLabel?.name ?? '—'}</span>
+          </div>
+        </div>
       );
     }
     if (column.type === 'checkbox') {
@@ -782,15 +809,15 @@ export function BoardGrid({
         aria-label="Board spreadsheet"
         aria-colcount={colCount}
         aria-rowcount={rows.length + 1}
-        className="relative h-[min(70vh,720px)] overflow-auto rounded-xl border border-[var(--unison-border)] bg-[var(--unison-surface-elevated)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--unison-teal)]"
+        className="relative h-[min(calc(100vh-220px),900px)] overflow-auto rounded-lg border border-[#E6E9EF] bg-white outline-none focus-visible:ring-2 focus-visible:ring-[#0073EA]"
         onKeyDown={onGridKeyDown}
       >
         <div style={{ width: totalWidth, minWidth: '100%' }}>
           <div
             role="row"
             aria-rowindex={1}
-            className="sticky top-0 z-20 flex border-b border-[var(--unison-border)] bg-[var(--unison-sand)]/95 text-xs font-semibold uppercase tracking-wide text-[var(--unison-muted)] backdrop-blur"
-            style={{ width: totalWidth }}
+            className="sticky top-0 z-20 flex border-b border-[var(--unison-border)] backdrop-blur"
+            style={{ width: totalWidth, background: '#F5F6F8', color: '#676879', fontSize: '12px', fontWeight: 600 }}
           >
             <div
               role="columnheader"
@@ -875,17 +902,30 @@ export function BoardGrid({
                     <div
                       role="row"
                       aria-rowindex={virtualRow.index + 2}
-                      className="flex h-11 items-center gap-2 border-b border-[var(--unison-border)] bg-[var(--unison-mist)]/50 px-3"
-                      style={{ width: totalWidth }}
+                      className="flex h-10 items-center gap-2 border-b border-[var(--unison-border)] px-0"
+                      style={{
+                        width: totalWidth,
+                        background: '#F5F6F8',
+                        borderLeft: `4px solid ${row.group.color}`,
+                      }}
                     >
-                      <span
-                        className="h-2.5 w-2.5 rounded-full"
-                        style={{ background: row.group.color }}
-                      />
-                      <span className="font-display text-sm font-semibold">
-                        {row.group.name}
-                      </span>
-                      <span className="text-xs text-[var(--unison-muted)]">{row.count}</span>
+                      <div className="flex flex-1 items-center gap-2 px-3">
+                        <span
+                          className="flex h-5 w-5 items-center justify-center rounded text-xs font-bold text-white"
+                          style={{ background: row.group.color }}
+                        >
+                          ▾
+                        </span>
+                        <span className="text-sm font-bold" style={{ color: '#323338' }}>
+                          {row.group.name}
+                        </span>
+                        <span
+                          className="flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-xs font-semibold text-white"
+                          style={{ background: row.group.color }}
+                        >
+                          {row.count}
+                        </span>
+                      </div>
                       {visibleColumns.map((col) => {
                         const summary = summarizeColumn(
                           rootItems.filter((i) => i.groupId === row.group.id),
@@ -907,31 +947,58 @@ export function BoardGrid({
                     <div
                       role="row"
                       aria-rowindex={virtualRow.index + 2}
-                      className="flex items-center gap-2 border-b border-[var(--unison-border)] px-3 py-2"
-                      style={{ width: totalWidth }}
+                      className="flex items-center border-b border-[var(--unison-border)]"
+                      style={{ width: totalWidth, borderLeft: `4px solid ${row.group.color}` }}
                     >
-                      <Input
-                        placeholder={`New item in ${row.group.name}`}
-                        value={newItemByGroup[row.group.id] ?? ''}
-                        onChange={(e) =>
-                          setNewItemByGroup((prev) => ({
-                            ...prev,
-                            [row.group.id]: e.target.value,
-                          }))
-                        }
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') void createItem(row.group.id);
-                        }}
-                        className="max-w-md"
-                        aria-label={`New item in ${row.group.name}`}
-                      />
-                      <Button
-                        size="sm"
-                        onClick={() => void createItem(row.group.id)}
-                        disabled={busy}
-                      >
-                        Add
-                      </Button>
+                      {newItemByGroup[row.group.id] !== undefined ? (
+                        <div className="flex flex-1 items-center gap-2 px-3 py-1.5">
+                          <Input
+                            autoFocus
+                            placeholder={`Item name`}
+                            value={newItemByGroup[row.group.id] ?? ''}
+                            onChange={(e) =>
+                              setNewItemByGroup((prev) => ({
+                                ...prev,
+                                [row.group.id]: e.target.value,
+                              }))
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') void createItem(row.group.id);
+                              if (e.key === 'Escape') setNewItemByGroup((prev) => {
+                                const next = { ...prev };
+                                delete next[row.group.id];
+                                return next;
+                              });
+                            }}
+                            onBlur={() => {
+                              if (!newItemByGroup[row.group.id]?.trim()) {
+                                setNewItemByGroup((prev) => {
+                                  const next = { ...prev };
+                                  delete next[row.group.id];
+                                  return next;
+                                });
+                              }
+                            }}
+                            className="max-w-md text-sm"
+                            aria-label={`New item in ${row.group.name}`}
+                          />
+                          <Button size="sm" onClick={() => void createItem(row.group.id)} disabled={busy}
+                            style={{ background: '#0073EA', color: '#fff', border: 'none' }}
+                          >
+                            Add item
+                          </Button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          className="flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors hover:bg-blue-50"
+                          style={{ color: '#0073EA' }}
+                          onClick={() => setNewItemByGroup((prev) => ({ ...prev, [row.group.id]: '' }))}
+                        >
+                          <span className="flex h-5 w-5 items-center justify-center rounded-full text-base font-bold" style={{ background: '#0073EA', color: '#fff' }}>+</span>
+                          Add item
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <div
@@ -943,8 +1010,8 @@ export function BoardGrid({
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => void onDropItem(row.item.id)}
                       className={cn(
-                        'flex items-stretch border-b border-[var(--unison-border)]',
-                        selectedId === row.item.id && 'bg-[var(--unison-mist)]/70',
+                        'group/row flex items-stretch border-b border-[#E6E9EF] transition-colors hover:bg-[#F5F6F8]',
+                        selectedId === row.item.id && 'bg-[#E8F5FF]',
                       )}
                       style={{ width: totalWidth }}
                       onClick={() => {
